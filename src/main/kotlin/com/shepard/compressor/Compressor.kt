@@ -18,6 +18,14 @@ fun countedQueue(text: String): Pair<PriorityQueue<Node>, Int> {
     return Pair(PriorityQueue(list.sorted()), length)
 }
 
+fun Pair<PriorityQueue<Node>, Int>.toHuffmanTree(): HuffmanTree {
+    val (left, right) = listOf<Node>(*this.first.toTypedArray()).take(2)
+    val huffmanTree = HuffmanTree(left, right, this.second)
+
+    this.first.asSequence().forEachIndexed { index, node -> if (index > 1) huffmanTree.put(node) }
+    return huffmanTree.apply { check() }
+}
+
 val srcSet = setOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
         'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
         'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' ',

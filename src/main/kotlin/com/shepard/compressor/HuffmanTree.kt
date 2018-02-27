@@ -2,14 +2,6 @@ package com.shepard.compressor
 
 import java.util.*
 
-fun huffmanTree(src: PriorityQueue<Node>, length: Int): HuffmanTree {
-    val (left, right) = listOf<Node>(*src.toTypedArray()).take(2)
-    val huffmanTree = HuffmanTree(left, right, length)
-
-    src.asSequence().forEachIndexed { index, node -> if (index > 1) huffmanTree.put(node) }
-    return huffmanTree.apply { check() }
-}
-
 class HuffmanTree(
         left: Node, right: Node,
         val length: Int,
