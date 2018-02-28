@@ -1,7 +1,5 @@
 package com.shepard.compressor
 
-import java.util.*
-
 class HuffmanTree(
         left: Node, right: Node,
         val length: Int,
@@ -13,20 +11,8 @@ class HuffmanTree(
     }
 
     fun check(): Boolean {
-        var sum = 0
-        val queue = PriorityQueue<Node>()
-        queue.add(top)
-        while (!queue.isEmpty()) {
-            val node = queue.poll()
-            node.apply {
-                if (left != null) queue.add(left)
-                if (right != null) queue.add(right)
-            }
-            if (node.char != null)
-                sum += node.count
-        }
-        if (sum != length) throw HuffmanBuildException(length, sum)
-        return sum == length
+        if (top.count != length) throw HuffmanBuildException(length, top.count)
+        return top.count == length
     }
 
     override fun toString(): String {
