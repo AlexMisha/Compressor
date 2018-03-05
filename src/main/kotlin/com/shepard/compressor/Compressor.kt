@@ -1,32 +1,59 @@
 package com.shepard.compressor
 
-import java.io.File
-import java.nio.charset.Charset
-
-fun read(path: String) = File(path).readText(Charset.forName("windows-1251"))
-
-fun countedQueue(text: String): Pair<List<Node>, Int> {
-    val charSequence = text.toList().asSequence()
-    var length = 0
-    val list: List<Node> = srcSet
+fun String.countChars(): MutableList<Node> {
+    return srcSet
             .asSequence()
-            .map { src -> Node(src, charSequence.count { c -> c == src }) }
+            .map { src -> Node(src, count { c -> c == src }) }
             .filter { it.count != 0 }
-            .onEach { length += it.count }
-            .toList()
-    return Pair(list.sorted(), length)
+            .toMutableList()
+            .apply { sort() }
 }
 
-fun Pair<List<Node>, Int>.toHuffmanTree(): HuffmanTree {
-    val (left, right) = listOf(*this.first.toTypedArray()).take(2)
-    val huffmanTree = HuffmanTree(left, right, this.second)
-
-    this.first.asSequence().forEachIndexed { index, node ->
-        if (index > 1) huffmanTree.put(node) {
-            this.first.getOrElse(index + 1) { Node(count = 0) }
-        }
+fun buildTree(list: MutableList<Node>): Node {
+    while (list.size > 1) {
+        list.twoMin { first, second -> list.add(0, first bind second) }
+        list.sort()
     }
-    return huffmanTree.apply { check() }
+    return list.single()
+}
+
+fun Node.createKeys(): List<CharKey> {
+    fun preOrder(node: Node, code: String, set: MutableSet<CharKey>) {
+        set.add(CharKey(node.char, code))
+        if (node.left == null && node.right == null) {
+            set.add(CharKey(node.char, code))
+            return
+        }
+        if (node.left != null) preOrder(node.left, code + 0, set)
+        if (node.right != null) preOrder(node.right, code + 1, set)
+    }
+
+    val set = mutableSetOf<CharKey>()
+    preOrder(this, "", set)
+    return set.filter { it.char != null }
+}
+
+inline fun <T : Comparable<T>> MutableList<T>.twoMin(result: (first: T, second: T) -> Unit) {
+    val first = this.min() ?: throw IllegalArgumentException("Can't find minimal element of list [$this]")
+    this.remove(first)
+    val second = this.min() ?: throw IllegalArgumentException("Can't find minimal element of list [$this]")
+    this.remove(second)
+    result(first, second)
+}
+
+infix fun Node.bind(node: Node): Node = Node(count = this.count + node.count, left = this, right = node)
+
+data class CharKey(
+        val char: Char? = null,
+        val code: String
+)
+
+data class Node(
+        val char: Char? = null,
+        val count: Int,
+        val left: Node? = null,
+        val right: Node? = null) : Comparable<Node> {
+    override fun compareTo(other: Node) = count - other.count
 }
 
 val srcSet = setOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
