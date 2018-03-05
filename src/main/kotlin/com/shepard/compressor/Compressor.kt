@@ -2,11 +2,10 @@ package com.shepard.compressor
 
 import java.io.File
 import java.nio.charset.Charset
-import java.util.*
 
 fun read(path: String) = File(path).readText(Charset.forName("windows-1251"))
 
-fun countedQueue(text: String): Pair<PriorityQueue<Node>, Int> {
+fun countedQueue(text: String): Pair<List<Node>, Int> {
     val charSequence = text.toList().asSequence()
     var length = 0
     val list: List<Node> = srcSet
@@ -15,14 +14,18 @@ fun countedQueue(text: String): Pair<PriorityQueue<Node>, Int> {
             .filter { it.count != 0 }
             .onEach { length += it.count }
             .toList()
-    return Pair(PriorityQueue(list.sorted()), length)
+    return Pair(list.sorted(), length)
 }
 
-fun Pair<PriorityQueue<Node>, Int>.toHuffmanTree(): HuffmanTree {
-    val (left, right) = listOf<Node>(*this.first.toTypedArray()).take(2)
+fun Pair<List<Node>, Int>.toHuffmanTree(): HuffmanTree {
+    val (left, right) = listOf(*this.first.toTypedArray()).take(2)
     val huffmanTree = HuffmanTree(left, right, this.second)
 
-    this.first.asSequence().forEachIndexed { index, node -> if (index > 1) huffmanTree.put(node) }
+    this.first.asSequence().forEachIndexed { index, node ->
+        if (index > 1) huffmanTree.put(node) {
+            this.first.getOrElse(index + 1) { Node(count = 0) }
+        }
+    }
     return huffmanTree.apply { check() }
 }
 
