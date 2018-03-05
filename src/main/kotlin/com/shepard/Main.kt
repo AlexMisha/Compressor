@@ -7,8 +7,10 @@ import java.io.File
 import java.nio.charset.Charset
 
 fun main(args: Array<String>) {
-    val tree = buildTree(read("src/main/resources/1.txt").countChars())
-    println(tree.createKeys())
+    val charset = Charset.forName("windows-1251")
+    File("src/main/resources/").walkTopDown().forEachIndexed { index, file ->
+        if (index == 0) return@forEachIndexed
+        val keys = buildTree(file.readText(charset).countChars()).createKeys()
+        println(keys)
+    }
 }
-
-fun read(path: String) = File(path).readText(Charset.forName("windows-1251"))

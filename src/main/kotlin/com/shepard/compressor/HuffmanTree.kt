@@ -46,7 +46,9 @@ infix fun Node.bind(node: Node): Node = Node(count = this.count + node.count, le
 data class CharKey(
         val char: Char? = null,
         val code: String
-)
+) {
+    override fun toString() = "[$char] - [$code]"
+}
 
 data class Node(
         val char: Char? = null,
