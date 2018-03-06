@@ -1,12 +1,16 @@
 package com.shepard.compressor
 
-fun String.countChars(): MutableList<Node> {
-    return srcSet
+inline fun String.countChars(countProvider: (count: Int) -> Unit): MutableList<Node> {
+    var count = 0;
+    val result = srcSet
             .asSequence()
             .map { src -> Node(src, count { c -> c == src }) }
             .filter { it.count != 0 }
+            .onEach { count += it.count }
             .toMutableList()
             .apply { sort() }
+    countProvider(count)
+    return result
 }
 
 fun buildTree(list: MutableList<Node>): Node {
@@ -43,6 +47,8 @@ inline fun <T : Comparable<T>> MutableList<T>.twoMin(result: (first: T, second: 
 
 infix fun Node.bind(node: Node): Node = Node(count = this.count + node.count, left = this, right = node)
 
+infix fun Node.correspondsTo(count: Int) = this.count == count
+
 data class CharKey(
         val char: Char? = null,
         val code: String
@@ -57,6 +63,9 @@ data class Node(
         val right: Node? = null) : Comparable<Node> {
     override fun compareTo(other: Node) = count - other.count
 }
+
+class HuffmanTreeBuildException(top: Node, count: Int, text: String) :
+        IllegalStateException("Top doesn't correspond to text \n top [$top] \n chars count [$count] \n text [$text]")
 
 val srcSet = setOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
         'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
