@@ -47,7 +47,10 @@ inline fun <T : Comparable<T>> MutableList<T>.twoMin(result: (first: T, second: 
 
 infix fun Node.bind(node: Node): Node = Node(count = this.count + node.count, left = this, right = node)
 
-infix fun Node.correspondsTo(count: Int) = this.count == count
+infix fun Node.correspondsTo(text: String) {
+    if (count == text.length) return
+    throw HuffmanTreeBuildException(this, text)
+}
 
 data class CharKey(
         val char: Char? = null,
@@ -64,8 +67,8 @@ data class Node(
     override fun compareTo(other: Node) = count - other.count
 }
 
-class HuffmanTreeBuildException(top: Node, count: Int, text: String) :
-        IllegalStateException("Top doesn't correspond to text \n top [$top] \n chars count [$count] \n text [$text]")
+class HuffmanTreeBuildException(top: Node, text: String) :
+        IllegalStateException("Top doesn't correspond to text \n top [$top] \n length [${text.length}] \n text [$text]")
 
 val srcSet = setOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
         'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
@@ -76,4 +79,6 @@ val srcSet = setOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', '
         '\u042C', '\u042D', '\u042E', '\u042F', '\u0430', '\u0431', '\u0432', '\u0433', '\u0434', '\u0435',
         '\u0436', '\u0437', '\u0438', '\u0439', '\u043A', '\u043B', '\u043C', '\u043D', '\u043E', '\u043F',
         '\u0440', '\u0441', '\u0442', '\u0443', '\u0444', '\u0445', '\u0446', '\u0447', '\u0448', '\u0449',
-        '\u044A', '\u044B', '\u044C', '\u044D', '\u044E', '\u044F', '\u23CE')
+        '\u044A', '\u044B', '\u044C', '\u044D', '\u044E', '\u044F', '\u23CE', '\u0401', '\u0451', '-', '\n',
+        '\t', '\r', '\u0003', '\u0004', ';', ':', '\"', '\'', '{', '}', '0', '1', '2', '3', '4', '5', '6', '7', '8',
+        '9', '(', ')')
