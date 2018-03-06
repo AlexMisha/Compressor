@@ -1,16 +1,12 @@
 package com.shepard.compressor
 
-inline fun String.countChars(countProvider: (count: Int) -> Unit): MutableList<Node> {
-    var count = 0;
-    val result = srcSet
+fun String.countChars(): List<Node> {
+    return srcSet
             .asSequence()
             .map { src -> Node(src, count { c -> c == src }) }
             .filter { it.count != 0 }
-            .onEach { count += it.count }
             .toMutableList()
             .apply { sort() }
-    countProvider(count)
-    return result
 }
 
 fun buildTree(list: MutableList<Node>): Node {
