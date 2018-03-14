@@ -12,7 +12,7 @@ class TestAlgorythm {
 
     @Test
     fun test() {
-        val text = File("src/main/resources/test.txt").readText()
+        val text = File("src/main/resources/1.txt").readText()
         val chars = text.countChars()
 
         val tree = buildTree(mutableListOf(*Arrays.copyOf(chars.toTypedArray(), chars.size)))
@@ -26,5 +26,19 @@ class TestAlgorythm {
 
         println("Output size: [$outputSize]")
         println("K: [${inputSize / outputSize}]")
+    }
+
+    @Test
+    fun test2() {
+        val text = "abcdeeff"
+        val chars = text.countChars()
+
+        val tree = buildTree(mutableListOf(*Arrays.copyOf(chars.toTypedArray(), chars.size)))
+        tree correspondsTo text
+
+        val keys = tree.createKeys()
+
+        println(tree)
+        println(keys)
     }
 }
