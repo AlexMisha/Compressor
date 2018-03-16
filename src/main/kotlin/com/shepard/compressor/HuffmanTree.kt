@@ -20,10 +20,7 @@ fun buildTree(list: MutableList<Node>): Node {
 fun Node.createKeys(): List<CharKey> {
     fun preOrder(node: Node, code: String, set: MutableSet<CharKey>) {
         set.add(CharKey(node.char, code))
-        if (node.left == null && node.right == null) {
-            set.add(CharKey(node.char, code))
-            return
-        }
+
         if (node.left != null) preOrder(node.left, code + 0, set)
         if (node.right != null) preOrder(node.right, code + 1, set)
     }
